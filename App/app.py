@@ -2,6 +2,7 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from App.models import db
+from App.config import config
 
 app = Flask(__name__)
 app.config.from_object('config.Config')
