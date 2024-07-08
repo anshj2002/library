@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('token');
     const role = localStorage.getItem('role');
 
-    const BASE_URL = 'https://railway.app/project/abf6b72d-2e3f-4c43-9b96-7780e5578cdd'; 
+    const BASE_URL = 'library-production-4ef2.up.railway.app'; 
 
     // Login functionality
     document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
