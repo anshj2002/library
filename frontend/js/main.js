@@ -2,12 +2,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('token');
     const role = localStorage.getItem('role');
 
+    const BASE_URL = 'https://railway.app/project/abf6b72d-2e3f-4c43-9b96-7780e5578cdd'; 
+
     // Login functionality
     document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
-        const response = await fetch('/api/login', {
+        const response = await fetch(`${BASE_URL}/api/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
@@ -28,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
         const role = document.getElementById('role').value;
-        const response = await fetch('/api/register', {
+        const response = await fetch(`${BASE_URL}/api/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password, role })
@@ -44,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Fetch books for members and librarians
     async function fetchBooks() {
-        const response = await fetch('/api/books', {
+        const response = await fetch(`${BASE_URL}/api/books`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const books = await response.json();
@@ -62,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Borrow book functionality
     window.borrowBook = async (bookId) => {
-        const response = await fetch(`/api/books/${bookId}/borrow`, {
+        const response = await fetch(`${BASE_URL}/api/books/${bookId}/borrow`, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -76,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Delete book functionality (for librarians)
     window.deleteBook = async (bookId) => {
-        const response = await fetch(`/api/books/${bookId}`, {
+        const response = await fetch(`${BASE_URL}/api/books/${bookId}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });
