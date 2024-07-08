@@ -1,8 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('token');
     const role = localStorage.getItem('role');
-
-    const BASE_URL = 'https://library-production-4ef2.up.railway.app'; 
+    const BASE_URL = 'https://library-production-4ef2.up.railway.app';
 
     // Login functionality
     document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
@@ -18,9 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (response.ok) {
             localStorage.setItem('token', data.access_token);
             localStorage.setItem('role', data.role);
-            window.location.href = 'books.html';
+            window.location.href = 'books.html';  // Redirect to books page after successful login
         } else {
-            alert(data.msg);
+            alert(data.msg);  // Show error message if login fails
         }
     });
 
@@ -29,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
-        const role = document.getElementById('role').value;
+        const role = document.getElementById('role').value;  // Assuming you have a role field in your registration form
         const response = await fetch(`${BASE_URL}/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -38,9 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = await response.json();
         if (response.ok) {
             alert('Registration successful!');
-            window.location.href = 'login.html';
+            window.location.href = 'login.html';  // Redirect to login page after successful registration
         } else {
-            alert(data.msg);
+            alert(data.msg);  // Show error message if registration fails
         }
     });
 
@@ -70,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         if (response.ok) {
             alert('Book borrowed successfully');
-            fetchBooks();
+            fetchBooks();  // Refresh books list after borrowing
         } else {
             alert('Failed to borrow book');
         }
@@ -84,14 +83,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         if (response.ok) {
             alert('Book deleted successfully');
-            fetchBooks();
+            fetchBooks();  // Refresh books list after deletion
         } else {
             alert('Failed to delete book');
         }
     };
 
-    // Initial data fetch
+    
     if (token) {
-        fetchBooks();
+        fetchBooks();  
     }
 });
