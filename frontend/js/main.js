@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('token');
     const role = localStorage.getItem('role');
 
-    const BASE_URL = 'http://library-production-4ef2.up.railway.app'; 
+    const BASE_URL = 'https://library-production-4ef2.up.railway.app'; 
 
     // Login functionality
     document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
         const role = document.getElementById('role').value;
-        const response = await fetch(`${BASE_URL}/api/register`, {
+        const response = await fetch(`${BASE_URL}/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password, role })
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Fetch books for members and librarians
     async function fetchBooks() {
-        const response = await fetch(`${BASE_URL}/api/books`, {
+        const response = await fetch(`${BASE_URL}/books`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const books = await response.json();
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Borrow book functionality
     window.borrowBook = async (bookId) => {
-        const response = await fetch(`${BASE_URL}/api/books/${bookId}/borrow`, {
+        const response = await fetch(`${BASE_URL}/books/${bookId}/borrow`, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Delete book functionality (for librarians)
     window.deleteBook = async (bookId) => {
-        const response = await fetch(`${BASE_URL}/api/books/${bookId}`, {
+        const response = await fetch(`${BASE_URL}/books/${bookId}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });
