@@ -1,10 +1,20 @@
-from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from App.models import db
 from App.config import Config
+from flask import Flask, jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
+
+@app.route('/api/data')
+def get_data():
+    return jsonify({"message": "Hello from Flask!"})
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
 app.config.from_object(Config)
 
 db.init_app(app)
