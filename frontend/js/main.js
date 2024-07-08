@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const BASE_URL = 'https://library-production-4ef2.up.railway.app/api';
+    const BASE_URL = 'https://library-production-4ef2.up.railway.app';
 
     async function handleRegistrationForm(event) {
         event.preventDefault();
