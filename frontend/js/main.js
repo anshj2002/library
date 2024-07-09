@@ -234,6 +234,37 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Failed to borrow book');
         }
     }
+    async function addBook(event) {
+        event.preventDefault();
+
+        const formData = new FormData(addBookForm);
+        const title = formData.get('title');
+        const author = formData.get('author');
+
+        try {
+            const response = await fetch(`${BASE_URL}/books`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title, author })
+            });
+            if (!response.ok) {
+                throw new Error('Failed to add book');
+            }
+            fetchBooks();
+            $('#addBookModal').modal('hide');
+            addBookForm.reset();
+            alert('Book added successfully');
+        } catch (error) {
+            console.error('Error adding book:', error.message);
+            alert('Failed to add book');
+        }
+    }
+
+    addBookForm.addEventListener('submit', addBook);
+
 
     async function returnBook(bookId) {
         try {
