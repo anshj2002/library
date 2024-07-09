@@ -194,4 +194,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loginForm) {
         loginForm.addEventListener('submit', handleLoginForm);
     }
+    const addBookFormElement = document.getElementById('addBookFormElement');
+    if (addBookFormElement) {
+        addBookFormElement.addEventListener('submit', handleAddBookForm);
+    }
+
+    if (window.location.pathname.endsWith('books.html')) {
+        loadBooks();
+    }
 });
