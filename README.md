@@ -110,5 +110,32 @@ To run the project locally:
 5. Access the frontend:
    - Open `index.html` or `login.html` from the `frontend` directory in a web browser.
 
-flow :-
+         Flow :-
+     
+![image](https://github.com/anshj2002/library/assets/97294496/186d836e-d94f-4c53-8b75-2c3aab7c68a1)
 
+    Explanation:
+
+  User Registration/Login:
+
+Users can either register with a new account or login with existing credentials.
+Authentication is handled to verify user identity and manage access.
+
+  User Role:
+
+Based on the role (Member or Librarian) assigned during registration or login, different functionalities are available.
+
+  Member Actions:
+
+* View Books: Members can see the list of available books.
+* Borrow Book: Members can borrow a book from the library.
+* Return Book: Members can return a borrowed book.
+
+  Librarian Actions:
+
+* Add New Book: Librarians can add a new book to the library database.
+* Edit Book: Librarians can modify details (title, author) of existing books.
+* Delete Book: Librarians can remove books from the library collection.
+* View Books (all):
+
+   Librarians can view all books in the library, including details like availability and status.
