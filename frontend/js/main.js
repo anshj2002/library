@@ -60,18 +60,63 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    async function fetchBooks() {
+    async function handleAddBookForm(event) {
+        event.preventDefault();
+
+        const formData = new FormData(event.target);
+        const title = formData.get('title');
+        const author = formData.get('author');
+
         try {
-            const token = localStorage.getItem('token');
             const response = await fetch(`${BASE_URL}/books`, {
+                method: 'POST',
+                body: JSON.stringify({ title, author }),
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            const data = await response.json();
 
+            const data = await response.json();
             if (response.ok) {
-                displayBooks(data);
+                alert('Book added successfully.');
+                window.location.reload(); // Reload to fetch the updated list of books
+            } else {
+                alert(data.msg);
+            }
+        } catch (error) {
+            console.error('Add book error:', error.message);
+            alert('Failed to add book. Please try again.');
+        }
+    }
+
+    async function fetchBooks() {
+        try {
+            const response = await fetch(`${BASE_URL}/books`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                const booksList = document.getElementById('booksList');
+                booksList.innerHTML = ''; // Clear existing list
+
+                data.forEach(book => {
+                    const bookItem = document.createElement('div');
+                    bookItem.className = 'book';
+                    bookItem.innerHTML = `
+                        <h3>${book.title}</h3>
+                        <p>${book.author}</p>
+                        <p>Status: ${book.status}</p>
+                        <button onclick="handleBorrowBook(${book.id})">Borrow</button>
+                        <button onclick="handleReturnBook(${book.id})">Return</button>
+                        <button onclick="handleEditBook(${book.id})">Edit</button>
+                        <button onclick="handleDeleteBook(${book.id})">Delete</button>
+                    `;
+                    booksList.appendChild(bookItem);
+                });
             } else {
                 alert(data.msg);
             }
@@ -81,101 +126,98 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function displayBooks(books) {
-        const booksList = document.getElementById('booksList');
-        booksList.innerHTML = '';
-
-        books.forEach(book => {
-            const bookDiv = document.createElement('div');
-            bookDiv.classList.add('book');
-
-            const titleElement = document.createElement('h3');
-            titleElement.textContent = book.title;
-
-            const authorElement = document.createElement('p');
-            authorElement.textContent = `Author: ${book.author}`;
-
-            const statusElement = document.createElement('p');
-            statusElement.textContent = `Status: ${book.status}`;
-
-            // Add update and delete buttons for LIBRARIAN
-            if (book.role === 'LIBRARIAN') {
-                const updateButton = document.createElement('button');
-                updateButton.textContent = 'Update';
-                updateButton.addEventListener('click', () => updateBook(book.id));
-                bookDiv.appendChild(updateButton);
-
-                const deleteButton = document.createElement('button');
-                deleteButton.textContent = 'Delete';
-                deleteButton.addEventListener('click', () => deleteBook(book.id));
-                bookDiv.appendChild(deleteButton);
-            }
-
-            bookDiv.appendChild(titleElement);
-            bookDiv.appendChild(authorElement);
-            bookDiv.appendChild(statusElement);
-
-            booksList.appendChild(bookDiv);
-        });
-    }
-
-    // Handle add book form submission
-    const addBookForm = document.getElementById('addBookFormElement');
-    addBookForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-
-        const formData = new FormData(addBookForm);
-        const title = formData.get('title');
-        const author = formData.get('author');
-
+    async function handleBorrowBook(bookId) {
         try {
-            const token = localStorage.getItem('token');
-            const response = await fetch(`${BASE_URL}/books`, {
+            const response = await fetch(`${BASE_URL}/books/${bookId}/borrow`, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ title, author })
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
             });
-            const data = await response.json();
 
+            const data = await response.json();
             if (response.ok) {
-                alert(data.msg);
-                addBookForm.reset();
-                fetchBooks(); // Refresh books list after adding
+                alert('Book borrowed successfully.');
+                window.location.reload(); // Reload to update the status
             } else {
                 alert(data.msg);
             }
         } catch (error) {
-            console.error('Add book error:', error.message);
-            alert('Failed to add book. Please try again.');
+            console.error('Borrow book error:', error.message);
+            alert('Failed to borrow book. Please try again.');
         }
-    });
-
-    // Functions for update and delete book
-    async function updateBook(bookId) {
-        // Implement update book functionality here
-        console.log(`Update book with ID ${bookId}`);
-        // You can create a form or modal for update operation
     }
 
-    async function deleteBook(bookId) {
-        // Implement delete book functionality here
-        console.log(`Delete book with ID ${bookId}`);
+    async function handleReturnBook(bookId) {
         try {
-            const token = localStorage.getItem('token');
+            const response = await fetch(`${BASE_URL}/books/${bookId}/return`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                alert('Book returned successfully.');
+                window.location.reload(); // Reload to update the status
+            } else {
+                alert(data.msg);
+            }
+        } catch (error) {
+            console.error('Return book error:', error.message);
+            alert('Failed to return book. Please try again.');
+        }
+    }
+
+    async function handleEditBook(bookId) {
+        const newTitle = prompt('Enter new title:');
+        const newAuthor = prompt('Enter new author:');
+
+        if (!newTitle || !newAuthor) {
+            return alert('Both title and author are required.');
+        }
+
+        try {
+            const response = await fetch(`${BASE_URL}/books/${bookId}`, {
+                method: 'PUT',
+                body: JSON.stringify({ title: newTitle, author: newAuthor }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                alert('Book updated successfully.');
+                window.location.reload(); // Reload to fetch the updated list of books
+            } else {
+                alert(data.msg);
+            }
+        } catch (error) {
+            console.error('Edit book error:', error.message);
+            alert('Failed to update book. Please try again.');
+        }
+    }
+
+    async function handleDeleteBook(bookId) {
+        if (!confirm('Are you sure you want to delete this book?')) {
+            return;
+        }
+
+        try {
             const response = await fetch(`${BASE_URL}/books/${bookId}`, {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            const data = await response.json();
 
+            const data = await response.json();
             if (response.ok) {
-                alert(data.msg);
-                fetchBooks(); // Refresh books list after deleting
+                alert('Book deleted successfully.');
+                window.location.reload(); // Reload to fetch the updated list of books
             } else {
                 alert(data.msg);
             }
@@ -194,12 +236,25 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loginForm) {
         loginForm.addEventListener('submit', handleLoginForm);
     }
-    const addBookFormElement = document.getElementById('addBookFormElement');
-    if (addBookFormElement) {
-        addBookFormElement.addEventListener('submit', handleAddBookForm);
+
+    const addBookForm = document.getElementById('addBookFormElement');
+    if (addBookForm) {
+        addBookForm.addEventListener('submit', handleAddBookForm);
     }
 
-    if (window.location.pathname.endsWith('books.html')) {
-        loadBooks();
+    if (document.getElementById('booksList')) {
+        fetchBooks();
+    }
+
+    const logoutButton = document.getElementById('logoutButton');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', () => {
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+        });
+    }
+
+    if (!localStorage.getItem('token') && window.location.pathname !== '/login.html' && window.location.pathname !== '/register.html') {
+        window.location.href = 'login.html';
     }
 });
